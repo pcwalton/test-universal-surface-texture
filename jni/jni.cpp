@@ -449,10 +449,10 @@ Java_org_mozilla_testuniversalsurfacetexture_TestUniversalSurfaceTexture_attachT
     uint8_t *bits = 0;
     int err = sModule->lock(sModule, sBuffer->handle, GRALLOC_USAGE_SW_READ_OFTEN |
                             GRALLOC_USAGE_SW_WRITE_OFTEN, 0, 0, 512, 512, (void**)&bits);
-    /*__android_log_print(ANDROID_LOG_ERROR, "TUST",
+    __android_log_print(ANDROID_LOG_ERROR, "TUST",
                 "### Buffer width=%d height=%d stride=%d format=%d usage=%d Bits are: %p, err=%d",
                 sBuffer->width, sBuffer->height, sBuffer->stride, sBuffer->format, sBuffer->usage,
-                bits, err);*/
+                bits, err);
 
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -466,7 +466,7 @@ Java_org_mozilla_testuniversalsurfacetexture_TestUniversalSurfaceTexture_attachT
 
     glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, sImage);
 
-    /*__android_log_print(ANDROID_LOG_ERROR, "TUST", "### Success! GL error is: %d",
-                        (int)glGetError());*/
+    __android_log_print(ANDROID_LOG_ERROR, "TUST", "### Success! GL error is: %d",
+                        (int)glGetError());
 }
 

@@ -56,9 +56,10 @@ public class TestUniversalSurfaceTexture extends Activity implements GLSurfaceVi
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+        // The SurfaceView must start out on screen to avoid crashes on PowerVR.
         RelativeLayout layout = new RelativeLayout(this);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(512, 512);
-        params.leftMargin = metrics.widthPixels + 1000;
+        params.leftMargin = metrics.widthPixels - 1;
         params.topMargin = 0;
 
         mSurfaceView = new SurfaceView(this) {
@@ -81,15 +82,6 @@ public class TestUniversalSurfaceTexture extends Activity implements GLSurfaceVi
         layout.addView(mGLSurfaceView, params);
 
         setContentView(layout);
-
-        mSurfaceView.postDelayed(new Runnable() {
-            public void run() {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(512, 512);
-                params.leftMargin = 1000;
-                params.topMargin = 0;
-                mSurfaceView.setLayoutParams(params);
-            }
-        }, 3000);
 
         /*try {
             Method method = SurfaceView.class.getMethod("setWindowType", Integer.TYPE);
@@ -169,6 +161,15 @@ public class TestUniversalSurfaceTexture extends Activity implements GLSurfaceVi
         Canvas c = holder.lockCanvas();
         c.drawColor(Color.BLUE);
         holder.unlockCanvasAndPost(c);
+
+        mSurfaceView.post(new Runnable() {
+            public void run() {
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(512, 512);
+                params.leftMargin = 1000;
+                params.topMargin = 0;
+                mSurfaceView.setLayoutParams(params);
+            }
+        });
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -327,22 +328,6 @@ public class TestUniversalSurfaceTexture extends Activity implements GLSurfaceVi
         public void loadGLTexture(GL10 gl, Context context) {
             Log.e("TUST", "### Loading GL texture");
 
-            //Get the texture from the Android resource directory
-            InputStream is = context.getResources().openRawResource(R.drawable.nehe);
-            Bitmap bitmap = null;
-            try {
-                //BitmapFactory is an Android graphics utility for images
-                bitmap = BitmapFactory.decodeStream(is);
-
-            } finally {
-                //Always clear and close
-                try {
-                    is.close();
-                    is = null;
-                } catch (IOException e) {
-                }
-            }
-
             //Generate one texture pointer...
             gl.glGenTextures(1, textures, 0);
             //...and bind it to our array
@@ -355,9 +340,6 @@ public class TestUniversalSurfaceTexture extends Activity implements GLSurfaceVi
             //Different possible texture parameters, e.g. GL10.GL_CLAMP_TO_EDGE
             gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);
             gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
-            
-            //Clean up
-            bitmap.recycle();
         }
     }
 
